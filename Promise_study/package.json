@@ -1,0 +1,17 @@
+{
+  "name": "lcz",
+  "version": "1.0.0",
+  "description": "",
+  "main": "promise.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev1":"nodemon ./promise1.js",
+    "dev2":"nodemon ./promise2.js",
+    "dev3":"nodemon ./promise3.js"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "nodemon": "^2.0.6"
+  }
+}
