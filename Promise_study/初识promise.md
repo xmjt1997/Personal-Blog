@@ -10,44 +10,87 @@
 
 
 
-​	**promise的基本构成**
+### **Promise的核心概念**
+
+​	Promise中的核心概念是==状态==，==状态转换==就是Promise执行异步事件的`时机`
+
+​	在Promise中有存在3种状态，分别对应的是:
+
+​	1、等待（==padding==）
+
+​	2、承诺实现（==rosolve==）
+
+​	3、承诺失效（==reject==）
+
+​	Promise初始状态只能为等待的padding状态，在适当的时机，我们可以选择改变padding的状态到reoslve或者reject。
+
+​	⚠️ Promise中的状态是不可逆转的，且仅允许改变一次,所以无法从resolve或reject状态再次切换到其他状态。当初始的padding改变为resolve或reject后，该Promise就相当于完成了它的使命，后续的异步处理就会交由一个==.then( )==的方法来实现。
+
+
+
+### **Promise的基本构成**
 
 ​	在ES6语法中，Promise是一个`构造函数`，使用时需要用`new`关键词来创建实例对象。Promise构造函数中自带`excutor`执行器，excutor执行器中有2个JavaScript中默认的函数参数==resolve==，==reject==
 
+​	==resolve==函数的作用是当Promise状态从padding转换到resolve时,可以把Promise中的对象或者变量当成参数传递出来供异步成功时调用，==reject==函数的作用是当Promise状态从padding转换到reject时候可以把Promise中的对象或者变量，以及系统报错当成参数传递出来供异步失败时调用。
 
+​	==.then( )==是Promise原型上的一个方法，**`Promise.prototype.then()`** 所以通过构造函数创建的Promise实例对象也会自带.then( )方法。.then( )方法接受2个函数参数，作为Promise中异步成功和异步失败的2个回调函数。
 
 
 
 ​	**Promise实例的基本代码结构：**
 
 ```javascript
+//ES6 箭头函数写法
 let promise = new Promise((resolve,reject)=>{
     if(/判断条件/){
-        resolve()
+        resolve()//承诺实现
     }else{
-				reject()
+				reject()//承诺实效
     }
 })
 promise.then(res=>{
-		//处理成功
-}).catch(err=>{
-  	//异常抛出-失败
+		//处理承诺实现方法
+},err=>{
+    //处理承诺失效方法     
 })
 ```
 
 
 
+❗️❗️❗️注意：Promise函数本身不是一个异步函数，在excutor执行器中运行的代码是同步的。执行异步的是.then( )方法中的事件
+
+```javascript
+console.log('步骤1');
+new Promise((resolve,reject)=>{
+    console.log('步骤2');
+})
+console.log('步骤3')
+
+//执行结果
+### 步骤1
+### 步骤2
+### 步骤3
+
+console.log('步骤1');
+new Promise((resolve,reject)=>{
+    console.log('步骤2');
+    resolve()
+}).then(res=>{
+    console.log('步骤3');
+})
+console.log('步骤4')
+
+//执行结果
+### 步骤1
+### 步骤2
+### 步骤4
+### 步骤3
+```
 
 
 
-
-
-
-
-
-❗️❗️❗️注意：Promise函数本身不是一个异步函数，在excutor执行器中运行的代码是同步的。
-
-​	
+​	==.catch( )==也是Promise原型上的一个方法，用来接受和处理Promise中的异步失败，乍一看怎么和.then( )中第二个函数参数的功能是一样的嘞？没错滴，这2种方法都是用来处理异步失败的回调函数，但它们2个之间还是有一些小小的区别。🌟（.then( )中第二个函数参数只能处理上一个Promise异步失败的回调，而.catch( )可以接收处理整个Promise链上发生的异步失败的回调）
 
 
 
