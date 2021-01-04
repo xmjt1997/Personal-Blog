@@ -20,13 +20,13 @@
 
 ​	1、等待（==padding==）
 
-​	2、承诺实现（==rosolve==）
+​	2、承诺实现（==fulfilled==）
 
 ​	3、承诺失效（==reject==）
 
-​	Promise初始状态只能为等待的padding状态，在适当的时机，我们可以选择改变padding的状态到reoslve或者reject。
+​	Promise初始状态只能为等待的padding状态，在适当的时机，我们可以选择改变padding的状态到fulfilled或者reject。
 
-​	⚠️ Promise中的状态是不可逆转的，且仅允许改变一次,所以无法从resolve或reject状态再次切换到其他状态。当初始的padding改变为resolve或reject后，该Promise就相当于完成了它的使命，后续的异步处理就会交由一个==.then( )==的方法来实现。
+​	⚠️ Promise中的状态是不可逆转的，且仅允许改变一次,所以无法从fulfilled或reject状态再次切换到其他状态。当初始的padding改变为fulfilled或reject后，该Promise就相当于完成了它的使命，后续的异步处理就会交由一个==then( )==的方法来实现。
 
 
 
@@ -36,7 +36,7 @@
 
 ​	==resolve==函数的作用是当Promise状态从padding转换到resolve时,可以把Promise中的对象或者变量当成参数传递出来供异步成功时调用，==reject==函数的作用是当Promise状态从padding转换到reject时候可以把Promise中的对象或者变量，以及系统报错当成参数传递出来供异步失败时调用。
 
-​	==.then( )==是Promise原型上的一个方法，**`Promise.prototype.then()`** 所以通过构造函数创建的Promise实例对象也会自带.then( )方法。.then( )方法接受2个函数参数，作为Promise中异步成功和异步失败的2个回调函数。
+​	==then( )==是Promise原型上的一个方法，**`Promise.prototype.then()`** 所以通过构造函数创建的Promise实例对象也会自带then( )方法。then( )方法接受2个函数参数，作为Promise中异步成功和异步失败的2个回调函数。
 
 
 
@@ -60,7 +60,7 @@ promise.then(res=>{
 
 
 
-❗️❗️❗️注意：Promise函数本身不是一个异步函数，在excutor执行器中运行的代码是同步的。执行异步的是.then( )方法中的事件
+❗️❗️❗️注意：Promise函数本身不是一个异步函数，在excutor执行器中运行的代码是同步的。执行异步的是then( )方法中的事件
 
 ```javascript
 console.log('步骤1');
@@ -92,7 +92,7 @@ console.log('步骤4')
 
 
 
-​	==.catch( )==也是Promise原型上的一个方法，用来接收和处理Promise中的异步失败，乍一看怎么和.then( )中第二个函数参数的功能是一样的嘞？没错滴，这2种方法都是用来处理异步失败的回调函数，但它们2个之间还是有一些小小的区别。🌟.then( )中第二个函数参数只能处理当前Promise异步失败的回调，而.catch( )可以处理整个`Promise链`上发生的异步失败的回调,便于异步失败和系统报错的整体处理。
+​	==.catch( )==也是Promise原型上的一个方法，用来接收和处理Promise中的异步失败，乍一看怎么和then( )中第二个函数参数的功能是一样的嘞？没错滴，这2种方法都是用来处理异步失败的回调函数，但它们2个之间还是有一些小小的区别。🌟 then( )中第二个函数参数只能处理当前Promise异步失败的回调，而catch( )可以处理整个`Promise链`上发生的异步失败的回调,便于异步失败和系统报错的整体处理。
 
 ```javascript
 let promise new Promise ((resolve,reject)=>{
@@ -114,11 +114,17 @@ promise.catch(err=>{
 ### 发生错误了
 ```
 
-
+⭕️ （**推荐在Promise中使用catch来捕获处理异步失败方法和抛出错误**）
 
 ### Promise链式调用
 
-​	链式调用是Promise中一个特别重要的属性。也是Promise能处理异步操作的关键,
+​	链式调用是Promise中一个特别重要的属性。也是Promise能处理异步操作的关键,那么链式调用是什么？它的原理又是什么呢？
+
+​	我们首先来回顾一下Promise，我们通过构造函数创建了Promise实例对象，Promise对象的状态变为fulfilled时，会在原型链上往下寻找then( )方法，执行它的第一个函数参数，如果Promise对象的状态变为reject，就会在原型链上找到then( )方法并执行第二个函数参数或执行catch( )方法。
+
+​	==Promise.prototype.then==方法和==Promise.prototype.catch==
+
+
 
 
 
