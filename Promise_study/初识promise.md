@@ -379,4 +379,6 @@ let promise = new Promise((resolve,reject)=>{
 
 
 
-### 总结
+### 总结:
+
+promise解决的问题
