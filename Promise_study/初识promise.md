@@ -1,6 +1,6 @@
 # Promise
 
-​			**promise**，中文翻译为`承诺，约定`，从字面意思来看，这应该是类似某种协议的东西，规定了什么事件发生的条件和触发方法。
+​		**Promise**，中文翻译为`承诺，约定,契约`，从字面意思来看，这应该是类似某种协议的东西，规定了什么事件发生的条件和触发方法。
 
 > ​	什么是`异步？？?`
 >
@@ -8,9 +8,7 @@
 >
 > ​	异步就是当系统执行一个事件的时候，不会等待该事件结束，而是会去继续执行其他事件，当这个异步事件有了响应结果之后，系统会在空闲的时候继续执行该事件。
 
-​		简单来说就是js引擎会首先判断该事件是同步任务还是异步任务，如果是同步任务，将该事件压入宏任务队列中排队等待执行，如果是异步事件，则进入微任务队列中等待宏任务队列处于空闲状态时，再将微任务队列中的事件移入宏任务队列执行。这样我们就可以把不确定执行时间的一些事件用异步来执行。提高了程序运行的效率，而`Promise`就是`ECMAscript ES6`原生的对象，是解决javascript语言异步编程的==一种方法==。
-
-
+​		简单来说就是js引擎会首先判断该事件是同步任务还是异步任务，如果是同步任务，将该事件压入宏任务队列中排队等待执行，如果是异步事件，则进入微任务队列中等待宏任务队列处于空闲状态时，再将微任务队列中的事件移入宏任务队列执行。这样我们就可以把不确定执行时间的一些事件用异步来执行。提高了程序运行的效率，
 
 ### **Promise的核心概念**
 
@@ -295,6 +293,30 @@ let promise = new Promise((resolve, reject) => {
 
 
 
+​		**规则6:** Promise的==resolve==和==reject==只能传递一个参数，如果传递多个参数必须用数组或对象进行封装，否则多余参数的值为`undefined`
+
+```javascript
+ //用数组封装参数
+let promise = new Promise((resolve,reject)=>{
+            resolve([1,2])
+        }).then(res=>{
+            console.log(res);
+        })
+ //执行结果
+ ### [1,2]
+ 
+//直接传递多参数
+  let promise = new Promise((resolve,reject)=>{
+            resolve(1,2)
+        }).then((num1,num2)=>{
+            console.log(num1,num2);
+        })
+ //执行结果
+ ### 1 undefined
+```
+
+
+
 ### Promise解决的实际问题
 
 ​		通过上面的介绍，我们大致了解了Promise的用法，但是为什么我们要使用Promise，在什么地方去使用Promise呢？接下来就来告诉你
@@ -371,14 +393,98 @@ let promise = new Promise((resolve,reject)=>{
 
 ​		两段代码进行对比，首先在样式上Promise方法书写的代码看起来更具有美感，在结构上Promise的代码比正常回调函数的写法更具结构性，每一个then方法里对应一个回调，这样写出的代码更容易被其他人所读懂。
 
-​		
+​		在普通回调函数中，我们不能保证每次回调的执行时间和次数和我们预设的一摸一样，当2个开发人员共同开发一个功能模块的时候可能由于沟通出现问题或另一个开发者的粗心，把传入的回调执行了多次
+
+```javascript
+function init(fn) {
+        let num = 1;
+        fn && fn(num);
+        /* 
+            #### 其他业务代码
+        */
+        num += 1;
+        fn && fn(num);
+        //这个方法可能被错误的调用了2次
+      }
+
+init((num) => {
+    console.log("我被调用了,输出" + num);
+ });
+
+//期望得到的结果
+### 我被调用了，输出1
+//实际得到的结果
+### 我被调用了，输出1
+### 我被调用了，输出2
+```
+
+​		如上面所见的模拟代码这就可能会造成系统运行上的报错或得到了一个错误的结果。这样的结果是大家都不想看到的。那我们如果用Promise改进一下呢
+
+```javascript
+function init(fn) {
+        return new Promise((resolve,reject)=>{
+            let num = 1;
+            resolve(num)
+            /*
+             其他业务代码
+            */
+            num+=1
+            resolve(num)
+            resolve(num)
+        }).then(res=>{
+            fn && fn(res);
+        })
+      }
+
+init((num) => {
+   console.log("我被调用了,输出" + num);
+ });
+```
+
+​		这样用Promise修改的代码，无论后面调用了多少次`resolve（）`方法，都不会再执行了，因为Promise的状态一旦被改变，就不能再更改了。一定程度上避免了回调被多次执行的问题。
 
 
 
+### Promise存在的一些问题
 
+​		1、Promise一旦被生成就会立刻执行，中途是无法退出的
+
+​		2、Promise执行器内部的代码如果在==resole==或==reject==改变状态后出现报错，是无法通过`then`方法第二个参数和`catch`捕获到，必须通过内部回调或者用try catch的方式来抛出错误
+
+```javascript
+//程序在resolve()被执行后出现报错
+let promise = new Promise((resolve,reject)=>{
+         resolve()
+         throw new Error('错误')
+     }).then(res=>{
+        
+     },err=>{
+         console.log(err);
+     }).catch(err=>{
+         console.log(err);
+     })
+//期待执行结果
+###  Error: 错误
+//实际执行结果
+### 没有任何输出
+
+//用try catch捕获错误方式
+let promise = new Promise((resolve, reject) => {
+        try {
+          resolve();
+          throw new Error("错误");
+        } catch (error) {
+          console.log(error);
+        }
+ });
+
+//执行结果
+### Error: 错误
+```
 
 
 
 ### 总结:
 
-promise解决的问题
+​		`Promise`是`ECMAscript ES6`原生的对象，是解决javascript语言异步编程产生回调地狱的==一种方法==。但它的本质也没有跳出回调问题，只是把嵌套关系优化成类似层级结构的写法来帮助开发者更容易处理异步中的逻辑代码。配合它的一些Api方法让我们更容易处理一些网络请求，但它也有自身的缺陷，在项目大量使用的话会降低一些性能，需要开发者在适时的时候去正确的使用它。
+
