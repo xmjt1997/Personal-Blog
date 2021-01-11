@@ -25,7 +25,7 @@ let promise = new Promise((resolve,reject)=>{
 let promise = Promise.resolve(//需要转成Promise的对象)
 ```
 
-​		Promise.resolve( ) 本质上就是Promise的语法糖，它等价于下面的写法
+​		Promise.resolve( ) 本质上就是Promise的语法糖，它的作用就是可以把现有的对象转换为一个状态为`fulfilled`的Promise对象。它等价于下面的写法
 
 ```
 let promise = new Promise(resolve=>{
@@ -39,9 +39,7 @@ let promise = new Promise(resolve=>{
 
 ​		**情况1**：`空对象`
 
-> ​	Promise.resolve方法允许不传递任何的参数对象，它的作用就是可以把现有的对象转换为一个状态为`fulfilled`的Promise对象。
->
-> ​	如果你想直接定义一个Promise对象，就可以直接使用`Promise.resolve`方法而无需通过`new Promise( )`来创建构造函数。
+> ​	Promise.resolve方法允许不传递任何的参数对象，如果你想直接定义一个Promise对象，就可以直接使用`Promise.resolve`方法而无需通过`new Promise( )`来创建构造函数。
 
 ```javascript
 let promise = Promise.resolve()
@@ -140,7 +138,48 @@ let promise5 = Promise.resolve(obj5).then(res=>{
 
 
 
-​	⚠️ 通过Promise.resolve这种方法生成的Promise也称为立即执行的Promise，在javascript事件循环机制(Event Loop)中处于本轮循环结束时执行，<!--关于JavaScript事件循环机制后面有机会将单独写一篇文章来介绍-->
+### Promise.reject
+
+​		Promise.reject( )的基本用法如下
+
+```javascript
+let promise = Promise.reject(//需要转成Promise的对象)
+```
+
+​		它也是Promise状态reject回调的语法糖，可以把现有的对象转换为一个状态为`reject`的Promise对象。它等价于下面的写法
+
+```javascript
+let promise = new Promise((resolve,reject)=>{
+       reject()
+ }).catch(err=>{
+  
+})
+```
+
+​		Promise.reject方法也可以选择是否传递参数，如果你想直接定义一个状态为`reject`的Promise对象，就可以直接使用`Promise.reject`方法
+
+​		⚠️和`Promise.resolve`方法不同的时候，当`Promise.reject`方法传递参数的时候，无论传递的参数是什么，Promise.reject都不会对其进行特殊处理，传什么就输出什么！
+
+```javascript
+let thenable = {
+      then:function(resolve, reject) {
+        reject("错误了");
+      },
+    };
+
+Promise.reject(thenable).catch((err) => {
+    console.log(err);
+  });
+
+//执行结果
+### {then:f(resolve, reject)}
+```
+
+
+
+
+
+​		⚠️ 通过Promise.resolve和Promise.reject这种方法生成的Promise也称为立即执行的Promise，在javascript事件循环机制(Event Loop)中处于本轮循环结束时执行，<!--关于JavaScript事件循环机制后面有机会将单独写一篇文章来介绍-->
 
 ```javascript
 //定时器事件
@@ -164,14 +203,6 @@ console.log('立即执行');
 ```
 
 
-
-
-
-### Promise.reject
-
-
-
-### 
 
 
 
