@@ -210,7 +210,7 @@ console.log('立即执行');
 
 Interable 可迭代对象 array map set
 
-整合接口 
+整合接口 。。
 
 ### Promise.race
 
