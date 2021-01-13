@@ -208,11 +208,11 @@ console.log('立即执行');
 
 ### Promise.all
 
-Interable 可迭代对象 array map set
-
-整合接口 。。
+promise.all封装
 
 ### Promise.race
+
+promise.race封装
 
 测试接口速度，做超时处理
 
