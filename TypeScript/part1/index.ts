@@ -9,4 +9,6 @@ let f = function():void{}
 let g:object
 let h:[1]
 let i:[string,number]
-i=[123,2313]
+i=['123',2313]
+
+let y ='star'
