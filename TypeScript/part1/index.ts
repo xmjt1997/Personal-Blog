@@ -12,3 +12,4 @@ let i:[string,number]
 i=['123',2313]
 
 let y ='star'
+//范型
