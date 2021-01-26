@@ -2,10 +2,10 @@ const { resolve } = require("path");
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const { CleanWebpackPlugin } = require("clean-webpack-plugin");
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
-const OptimizeCssAssetsWebpackPlugin = require('optimize-css-assets-webpack-plugin')
-const ESLintPlugin = require('eslint-webpack-plugin')
+const OptimizeCssAssetsWebpackPlugin = require("optimize-css-assets-webpack-plugin");
+const ESLintPlugin = require("eslint-webpack-plugin");
 
-process.env.NODE_ENV=='development'
+process.env.NODE_ENV == "development";
 module.exports = {
   mode: "development",
   entry: "./src/index.js",
@@ -28,20 +28,49 @@ module.exports = {
       {
         test: /\.css$/,
         use: [
-            // 'style-loader',
+          // 'style-loader',
           MiniCssExtractPlugin.loader,
           "css-loader",
           "postcss-loader",
         ],
       },
-    //   {
-    //     test:/\.js$/,
-    //     exclude:'/node_modules',
-    //     loader:'eslint-loader',
-    //     options:{
-    //         fix:true
-    //     }
-    //   },
+      {
+        test: /\.js$/,
+        exclude: "/node_modules",
+        loader: "eslint-loader",
+        options: {
+          fix: true,
+        },
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: {
+          loader: "babel-loader",
+          options: {
+            presets: [
+              [
+                "@babel/preset-env",
+                {
+                  useBuiltIns: "usage",
+                  corejs: {
+                    //core-js的版本
+                    version: 3,
+                  },
+                  //需要兼容的浏览器
+                  targets: {
+                    chrome: "60",
+                    firefox: "60",
+                    ie: "9",
+                    safari: "10",
+                    edge: "17",
+                  },
+                },
+              ],
+            ],
+          },
+        },
+      },
       {
         test: /\.(jpg|png|gif|)$/,
         loader: "url-loader",
@@ -77,8 +106,8 @@ module.exports = {
     }),
     new OptimizeCssAssetsWebpackPlugin(),
     new ESLintPlugin({
-        fix:true
-    })
+      fix: true,
+    }),
   ],
   // devServer:{
   //     contentBase:resolve(__dirname,'dist'),
