@@ -34,43 +34,44 @@ module.exports = {
           "postcss-loader",
         ],
       },
-      {
-        test: /\.js$/,
-        exclude: "/node_modules",
-        loader: "eslint-loader",
-        options: {
-          fix: true,
-        },
-      },
-      {
-        test: /\.js$/,
-        exclude: /node_modules/,
-        use: {
-          loader: "babel-loader",
-          options: {
-            presets: [
-              [
-                "@babel/preset-env",
-                {
-                  useBuiltIns: "usage",
-                  corejs: {
-                    //core-js的版本
-                    version: 3,
-                  },
-                  //需要兼容的浏览器
-                  targets: {
-                    chrome: "60",
-                    firefox: "60",
-                    ie: "9",
-                    safari: "10",
-                    edge: "17",
-                  },
-                },
-              ],
-            ],
-          },
-        },
-      },
+      // {
+      //   test: /\.js$/,
+      //   exclude: "/node_modules",
+      //   loader: "eslint-loader",
+      //   options: {
+      //     fix: true,
+      //   },
+      // },
+      {   
+        test:/\.js$/,
+        exclude:/node_modules/,
+        use:{
+            loader:'babel-loader',
+        options:{
+            presets:[
+                [
+                    '@babel/preset-env',
+                    {
+                        useBuiltIns:'usage',
+                        corejs:{
+                        //core-js的版本
+                            version:3
+                        },
+                        //需要兼容的浏览器
+                        targets:{
+                            chrome:'60',
+                            firefox:'60',
+                            ie:'9',
+                            safari:'10',
+                            edge:'17'
+                        }
+                    }
+                ]
+            ]
+        }
+        }
+        
+    },
       {
         test: /\.(jpg|png|gif|)$/,
         loader: "url-loader",
@@ -99,6 +100,10 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "./src/index.html",
       title: "webpack",
+      minify:{
+        collapseWhitespace:true,
+        removeComments:true
+      }
     }),
     new CleanWebpackPlugin(),
     new MiniCssExtractPlugin({
